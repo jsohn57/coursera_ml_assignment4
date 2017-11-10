@@ -63,25 +63,18 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------
 
+% recode y vector
+Y = zeros(num_labels, num_labels);
+for i = 1:num_labels
+	Y(i, i) = 1;
+end
+
+X = [ones(1, size(X, 2)); X];
+for i = 1:m
+
+end
 % =========================================================================
 
 % Unroll gradients
