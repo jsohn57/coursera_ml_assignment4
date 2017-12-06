@@ -66,19 +66,29 @@ Theta2_grad = zeros(size(Theta2));
 % -------------------------------------------------------------
 
 % recode y vector
-Y = zeros(num_labels, num_labels);
-for i = 1:num_labels
-	Y(i, i) = 1;
-end
+Y = ([1:num_labels] == y)';
 
-X = [ones(1, size(X, 2)); X];
-for i = 1:m
+X = [ones(1, size(X, 1)); X'];
+z2 = Theta1 * X;
+a2 = sigmoid(z2);
+a2 = [ones(1, size(a2, 2)); a2];
+z3 = Theta2 * a2;
+a3 = sigmoid(z3);
+J = sum(sum(-Y .* log(a3) - (1 - Y) .* log(1 - a3))) / m + lambda / (2*m) * (sum(sum(Theta1(:, 2:end) .* Theta1(:, 2:end))) + sum(sum(Theta2(:, 2:end) .* Theta2(:, 2:end))));
 
-end
+err3 = a3 - Y;
+err2 = (Theta2' * err3 .* [ones(1, size(z2, 2)); sigmoidGradient(z2)])(2:end, :);
+delta2 = err3 * a2';
+delta1 = err2 * X';
+
+Theta1_grad = delta1 / m;
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda * Theta1(:, 2:end) / m);
+Theta2_grad = delta2 / m;
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda * Theta2(:, 2:end) / m);
+
 % =========================================================================
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
